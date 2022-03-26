@@ -55,8 +55,8 @@ if(COMMAND cmake_policy)
   cmake_policy(PUSH)
 endif(COMMAND cmake_policy)
 
-# 2.6.4 is required because of the get_filename_component(REALPATH)
-cmake_minimum_required( VERSION 2.6.4 FATAL_ERROR )
+# 2.8.12 is required because of the get_filename_component(REALPATH)
+cmake_minimum_required( VERSION 2.8.12 FATAL_ERROR )
 
 # allow duplicate target names, this is also done in FindKDE4Internal.cmake
 cmake_policy(SET CMP0002 OLD)
