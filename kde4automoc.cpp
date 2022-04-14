@@ -334,8 +334,8 @@ bool AutoMoc::run(int _argc, char **_argv)
     std::map<std::string, std::string> includedMocs;    // key = moc source filepath, value = moc output filepath
     std::map<std::string, std::string> notIncludedMocs; // key = moc source filepath, value = moc output filename
 
-    std::tr1::regex mocIncludeRegExp("[\n]\\s*#\\s*include\\s+[\"<]((?:[^ \">]+/)?moc_[^ \">/]+\\.cpp|[^ \">]+\\.moc)[\">]");
-    std::tr1::regex qObjectRegExp("[\n]\\s*Q_OBJECT\\b");
+    std::regex mocIncludeRegExp("[\n]\\s*#\\s*include\\s+[\"<]((?:[^ \">]+/)?moc_[^ \">/]+\\.cpp|[^ \">]+\\.moc)[\">]");
+    std::regex qObjectRegExp("[\n]\\s*Q_OBJECT\\b");
     std::list<std::string> headerExtensions;
 #if defined(Q_OS_WIN)
     // not case sensitive
@@ -406,8 +406,8 @@ bool AutoMoc::run(int _argc, char **_argv)
             }
             const std::string absPath = STR(sourceFileInfo.absolutePath()) + '/';
 
-            std::tr1::sregex_iterator it(contentsString.begin(), contentsString.end(), mocIncludeRegExp);
-            std::tr1::sregex_iterator it_end;
+            std::sregex_iterator it(contentsString.begin(), contentsString.end(), mocIncludeRegExp);
+            std::sregex_iterator it_end;
             if (it == it_end) {
                 // no moc #include, look whether we need to create a moc from the .h nevertheless
                 //std::cout << "no moc #include in the .cpp file";
@@ -419,7 +419,7 @@ bool AutoMoc::run(int _argc, char **_argv)
                             notIncludedMocs.find(headername) != notIncludedMocs.end()) {
                         const std::string currentMoc = "moc_" + basename + ".cpp";
                         const std::string contents = readAll(headername);
-                        if (std::tr1::regex_search(contents, qObjectRegExp)) {
+                        if (std::regex_search(contents, qObjectRegExp)) {
                             //std::out << "header contains Q_OBJECT macro";
                             notIncludedMocs[headername] = currentMoc;
                         }
@@ -433,7 +433,7 @@ bool AutoMoc::run(int _argc, char **_argv)
                             notIncludedMocs.find(privateHeaderName) != notIncludedMocs.end()) {
                         const std::string currentMoc = "moc_" + basename + "_p.cpp";
                         const std::string contents = readAll(privateHeaderName);
-                        if (std::tr1::regex_search(contents, qObjectRegExp)) {
+                        if (std::regex_search(contents, qObjectRegExp)) {
                             //std::out << "header contains Q_OBJECT macro";
                             notIncludedMocs[privateHeaderName] = currentMoc;
                         }
@@ -459,7 +459,7 @@ bool AutoMoc::run(int _argc, char **_argv)
                     //
                     // TODO: currently any .moc file name will be used if the source contains
                     // Q_OBJECT
-                    if (moc_style || !std::tr1::regex_search(contentsString, qObjectRegExp)) {
+                    if (moc_style || !std::regex_search(contentsString, qObjectRegExp)) {
                         if (moc_style) {
                             // basename should be the part of the moc filename used for finding the
                             // correct header, so we need to remove the moc_ part
