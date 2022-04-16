@@ -296,11 +296,11 @@ bool AutoMoc::run(int _argc, char **_argv)
     std::fstream outfile;
 
     std::string srcdir(args[2]);
-    if (endsWith(srcdir, "/")) {
+    if (!endsWith(srcdir, "/")) {
         srcdir += '/';
     }
     builddir = args[3];
-    if (endsWith(builddir, "/")) {
+    if (!endsWith(builddir, "/")) {
         builddir += '/';
     }
 
@@ -416,7 +416,7 @@ bool AutoMoc::run(int _argc, char **_argv)
                 for (std::list<std::string>::const_iterator it = headerExtensions.begin();
                      it != headerExtensions.end(); ++it) {
                     const std::string headername = absPath + basename + (*it);
-                    if (fileExists(headername) && includedMocs.find(headername) != includedMocs.end() &&
+                    if (fileExists(headername) && includedMocs.find(headername) == includedMocs.end() &&
                             notIncludedMocs.find(headername) == notIncludedMocs.end()) {
                         const std::string currentMoc = "moc_" + basename + ".cpp";
                         const std::string contents = readAll(headername);
@@ -430,7 +430,7 @@ bool AutoMoc::run(int _argc, char **_argv)
                 for (std::list<std::string>::const_iterator it = headerExtensions.begin();
                      it != headerExtensions.end(); ++it) {
                     const std::string privateHeaderName = absPath + basename + "_p" + (*it);
-                    if (fileExists(privateHeaderName) && includedMocs.find(privateHeaderName) != includedMocs.end() &&
+                    if (fileExists(privateHeaderName) && includedMocs.find(privateHeaderName) == includedMocs.end() &&
                             notIncludedMocs.find(privateHeaderName) == notIncludedMocs.end()) {
                         const std::string currentMoc = "moc_" + basename + "_p.cpp";
                         const std::string contents = readAll(privateHeaderName);
