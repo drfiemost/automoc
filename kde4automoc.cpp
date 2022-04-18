@@ -312,7 +312,8 @@ bool AutoMoc::run(int _argc, char **_argv)
     headerExtensions.push_back(".hxx");
     headerExtensions.push_back(".H");
 #endif
-    /* not safe: if a moc file is missing it's hard to get it generated if this check is "active"
+
+#if 0 // not safe: if a moc file is missing it's hard to get it generated if this check is "active"
     const QDateTime &lastRun = QFileInfo(dotFiles).lastModified();
     if (!generateAll) {
         bool dirty = false;
@@ -343,7 +344,7 @@ bool AutoMoc::run(int _argc, char **_argv)
             return true;
         }
     }
-    */
+#endif
 
     for (std::list<std::string>::const_iterator it = sourceFiles.begin();
           it != sourceFiles.end(); ++it) {
