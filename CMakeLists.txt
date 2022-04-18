@@ -46,7 +46,7 @@ endif(MSVC AND AUTOMOC_STATIC)
 # Always include srcdir and builddir in include path
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 include_directories(${QT_INCLUDE_DIR})
-add_executable(automoc4 kde4automoc.cpp)
+add_executable(automoc4 main.cpp kde4automoc.cpp)
 
 set_target_properties(automoc4  PROPERTIES  SKIP_BUILD_RPATH            FALSE
                                             INSTALL_RPATH_USE_LINK_PATH TRUE )

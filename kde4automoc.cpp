@@ -24,13 +24,14 @@
     THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include "kde4automoc.h"
+
 // Temporary macros to convert between std::string and QString.
 // Remove them when porting away from Qt is completed
 #define STR(x) std::string(QString(x).toLatin1())   // QString -> std::string
 #define QQQ(x) QString(x.c_str())                   // std::string -> QString
 
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <assert.h>
 #include <regex>
@@ -42,7 +43,6 @@
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QProcess>
-#include <cstdlib>
 #include <sys/types.h>
 #include <time.h>
 #include <errno.h>
@@ -61,59 +61,6 @@
 // currently this is only used for the version number, Alex
 #include "automoc4_config.h"
 
-class AutoMoc
-{
-    public:
-        AutoMoc();
-        bool run(int argc, char **argv);
-
-    private:
-        void dotFilesCheck(bool);
-        void lazyInitMocDefinitions();
-        void lazyInit();
-        bool touch(const std::string &filename);
-        bool generateMoc(const std::string &sourceFile, const std::string &mocFileName);
-        void printUsage(const std::string &);
-        void printVersion();
-        void echoColor(const std::string &msg)
-        {
-            QProcess cmakeEcho;
-            cmakeEcho.setProcessChannelMode(QProcess::ForwardedChannels);
-            QStringList args;
-            for (std::list<std::string>::const_iterator it = cmakeEchoColorArgs.begin();
-                 it != cmakeEchoColorArgs.end(); ++it) {
-                args.append(QQQ((*it)));
-            }
-            args << QQQ(msg);
-            cmakeEcho.start(QQQ(cmakeExecutable), args, QIODevice::NotOpen);
-            cmakeEcho.waitForFinished(-1);
-        }
-
-        // Helper functions to make code clearer
-        bool fileExists(const std::string &filename);
-        std::string readAll(const std::string &filename);
-        std::list<std::string> split(const std::string &input, char delimiter);
-        std::string join(const std::list<std::string> lst, char separator);
-        bool endsWith(const std::string &str, const std::string &with);
-        bool startsWith(const std::string &str, const std::string &with);
-        void trim(std::string &s);
-
-        std::vector<std::string> args;
-        std::string builddir;
-        std::string mocExe;
-        std::list<std::string> mocIncludes;
-        std::list<std::string> mocDefinitions;
-        std::list<std::string> cmakeEchoColorArgs;
-        std::string cmakeExecutable;
-        std::string dotFilesName;
-        std::ifstream dotFiles;
-        const bool verbose;
-        bool failed;
-        bool automocCppChanged;
-        bool generateAll;
-        bool doTouch;
-};
-
 void AutoMoc::printUsage(const std::string &path)
 {
     std::cout << "Usage: " << path << " <outfile> <srcdir> <builddir> <moc executable> <cmake executable> [--touch]" << std::endl;
@@ -124,20 +71,26 @@ void AutoMoc::printVersion()
     std::cout << "automoc4 " << AUTOMOC4_VERSION << std::endl;
 }
 
+void AutoMoc::echoColor(const std::string &msg)
+{
+    QProcess cmakeEcho;
+    cmakeEcho.setProcessChannelMode(QProcess::ForwardedChannels);
+    QStringList args;
+    for (std::list<std::string>::const_iterator it = cmakeEchoColorArgs.begin();
+            it != cmakeEchoColorArgs.end(); ++it) {
+        args.append(QQQ((*it)));
+    }
+    args << QQQ(msg);
+    cmakeEcho.start(QQQ(cmakeExecutable), args, QIODevice::NotOpen);
+    cmakeEcho.waitForFinished(-1);
+}
+
 void AutoMoc::dotFilesCheck(bool x)
 {
     if (!x) {
         std::cerr << "Error: syntax error in " << dotFilesName << std::endl;
         ::exit(EXIT_FAILURE);
     }
-}
-
-int main(int argc, char **argv)
-{
-    if (!AutoMoc().run(argc, argv)) {
-        return EXIT_FAILURE;
-    }
-    return 0;
 }
 
 AutoMoc::AutoMoc()
