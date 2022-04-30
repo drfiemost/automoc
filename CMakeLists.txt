@@ -2,8 +2,13 @@ cmake_minimum_required(VERSION 3.1)
 project(Automoc4)
 
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+IF("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+        "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    add_compile_options("$<$<CONFIG:DEBUG>:-Wall;-Wextra;-pedantic>")
+ENDIF()
 
 include(CTest)
 
