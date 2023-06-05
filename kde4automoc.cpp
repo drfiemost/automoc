@@ -38,6 +38,7 @@
 #include <sys/stat.h>
 #include <set>
 #include <map>
+#include <functional>
 
 #include <QtCore/QDateTime>
 #include <QtCore/QDir>
@@ -689,6 +690,6 @@ bool AutoMoc::endsWith(const std::string &str, const std::string &with)
 // trim whitespace from both ends of a string
 void AutoMoc::trim(std::string &s)
 {
-    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(::isspace))).base(), s.end());
-    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(::isspace))));
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not_fn(std::function<int(int)>(::isspace))).base(), s.end());
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not_fn(std::function<int(int)>(::isspace))));
 }
