@@ -28,8 +28,8 @@
 
 // Temporary macros to convert between std::string and QString.
 // Remove them when porting away from Qt is completed
-#define STR(x) std::string(QString(x).toLatin1())   // QString -> std::string
-#define QQQ(x) QString(x.c_str())                   // std::string -> QString
+#define STR(x) std::string(QString(x).toLatin1().constData())   // QString -> std::string
+#define QQQ(x) QString(x.c_str())                               // std::string -> QString
 
 #include <iostream>
 #include <sstream>
